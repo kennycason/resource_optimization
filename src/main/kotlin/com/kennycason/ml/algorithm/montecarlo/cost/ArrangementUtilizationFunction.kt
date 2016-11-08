@@ -17,16 +17,14 @@ import com.kennycason.ml.model.Office
  * Note: Assumes all arrangements are valid
  */
 class ArrangementUtilizationFunction(val office: Office,
-                                     val roomBalanceWeight: Double = 0.50,
-                                     val employeeWeight: Double = 0.50)
-{
-    fun evaluate(arrangement: Arrangement) {
+                                     val employeeWeight: Double = 0.5,
+                                     val roomBalanceWeight: Double = 0.5) {
 
-    }
+    private val employeeUtilizationFunction = EmployeeUtilizationFunction(office)
+    private val roomUtilizationFunction = RoomUtilizationFunction(office)
 
-    private fun employeeBalance(arrangement: Arrangement) {
-        val totalEmployees = office.employees.size()
-       // arrangement.e
+    fun evaluate(arrangement: Arrangement): Double =
+            employeeUtilizationFunction.evaluate(arrangement) * employeeWeight +
+            roomUtilizationFunction.evaluate(arrangement) * roomBalanceWeight
 
-    }
 }
