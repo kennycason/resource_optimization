@@ -3,7 +3,6 @@ package com.kennycason.ml.algorithm.montecarlo.cost
 import com.kennycason.ml.algorithm.montecarlo.model.Arrangement
 import com.kennycason.ml.model.Office
 import org.eclipse.collections.impl.factory.Maps
-import java.time.Duration
 
 /**
  * Created by kenny on 11/7/16.
@@ -19,12 +18,12 @@ class EmployeeUtilizationFunction(val office: Office) {
     fun evaluate(arrangement: Arrangement): Double {
         val employeeHours: MutableMap<String, Double> = Maps.mutable.empty()
         // create a zeroed entry for each employee
-        office.employees.forEach { employee -> employeeHours.put(employee.name, 0.0) }
+        office.employees.forEach { employee -> employeeHours.put(employee.person.name, 0.0) }
 
         // tally up hours worked for each employee
         arrangement.appointments.forEach { appointment ->
-            employeeHours.put(appointment.employee.name,
-                    employeeHours.get(appointment.employee.name)!! + appointment.time.duration)
+            employeeHours.put(appointment.employee.person.name,
+                    employeeHours.get(appointment.employee.person.name)!! + appointment.time.duration)
         }
 
         // calculate balance

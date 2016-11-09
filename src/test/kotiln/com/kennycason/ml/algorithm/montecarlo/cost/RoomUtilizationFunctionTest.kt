@@ -18,8 +18,8 @@ class RoomUtilizationFunctionTest {
     @Test
     fun basic() {
         // test data
-        val employee = Employee(name = "mock employee", gender = Gender.MALE, shifts = Lists.immutable.empty(), capableServices = Lists.immutable.empty())
-        val customer = Customer(name = "mock customer")
+        val employee = Employee(person = Person(name = "mock employee", gender = Gender.MALE), shifts = Lists.immutable.empty(), capableServices = Lists.immutable.empty())
+        val person = Person(name = "mock customer", gender = Gender.MALE)
         val service = Service(name = "mock service", possibleDurations = Lists.immutable.empty())
 
         val room1 = Room(name = "room 1", services = Lists.immutable.empty())
@@ -28,19 +28,19 @@ class RoomUtilizationFunctionTest {
 
         // build arrangements (i.e. sample appointments)
         val appointment1 = Appointment(
-                customer = customer,
+                customer = person,
                 employee = employee,
                 time = Range(8.0, 12.0),
                 room = room1,
                 service = service)
         val appointment2 = Appointment(
-                customer = customer,
+                customer = person,
                 employee = employee,
                 time = Range(8.0, 12.0),
                 room = room2,
                 service = service)
         val appointment3 = Appointment(
-                customer = customer,
+                customer = person,
                 employee = employee,
                 time = Range(8.0, 12.0),
                 room = room3,

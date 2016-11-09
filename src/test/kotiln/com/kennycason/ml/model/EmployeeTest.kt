@@ -15,22 +15,19 @@ class EmployeeTest {
     @Test
     fun totalHours() {
         val employee = Employee(
-                name = "kenny",
-                gender = Gender.MALE,
+                person = Person(name = "kenny", gender = Gender.MALE),
                 shifts = Lists.immutable.empty(),
                 capableServices = Lists.immutable.empty())
         assertEquals(0.0, employee.totalHoursAvailable)
 
         val employee2 = Employee(
-                name = "kenny",
-                gender = Gender.MALE,
+                person = Person(name = "kenny", gender = Gender.MALE),
                 shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         assertEquals(8.0, employee2.totalHoursAvailable)
 
         val employee3 = Employee(
-                name = "kenny",
-                gender = Gender.MALE,
+                person = Person(name = "kenny", gender = Gender.MALE),
                 shifts = Lists.immutable.of(
                         Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0)),
                         Shift(Weekday.TUESDAY, shift2 = Range(13.5, 17.5)),

@@ -18,24 +18,21 @@ class EmployeeUtilizationFunctionTest {
     @Test
     fun basic() {
         // test data
-        val customer = Customer(name = "mock customer")
+        val customer = Person(name = "mock customer", gender = Gender.MALE)
         val room = Room(name = "mock room", services = Lists.immutable.empty())
         val service = Service(name = "mock service", possibleDurations = Lists.immutable.empty())
 
         // three 8 hour employees
         val employee1 = Employee(
-                name = "kenny",
-                gender = Gender.MALE,
+                person = Person(name = "kenny", gender = Gender.MALE),
                 shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee2 = Employee(
-                name = "addam",
-                gender = Gender.MALE,
+                person = Person(name = "addam", gender = Gender.MALE),
                 shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee3 = Employee(
-                name = "andrew",
-                gender = Gender.MALE,
+                person = Person(name = "andrew", gender = Gender.MALE),
                 shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
 

@@ -16,7 +16,7 @@ import com.kennycason.ml.model.Office
  *
  * Note: Assumes all arrangements are valid
  */
-class ArrangementUtilizationFunction(val office: Office,
+class ArrangementUtilizationFunction(office: Office,
                                      val employeeWeight: Double = 0.5,
                                      val roomBalanceWeight: Double = 0.5) {
 

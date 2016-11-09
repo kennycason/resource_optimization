@@ -3,7 +3,6 @@ package com.kennycason.ml.algorithm.montecarlo.cost
 import com.kennycason.ml.algorithm.montecarlo.model.Arrangement
 import com.kennycason.ml.model.Office
 import org.eclipse.collections.impl.factory.Maps
-import java.time.Duration
 
 /**
  * Created by kenny on 11/7/16.

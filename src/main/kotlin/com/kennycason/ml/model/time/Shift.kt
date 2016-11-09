@@ -1,7 +1,5 @@
 package com.kennycason.ml.model.time
 
-import java.time.Duration
-
 /**
  * Created by kenny on 11/7/16.
  */

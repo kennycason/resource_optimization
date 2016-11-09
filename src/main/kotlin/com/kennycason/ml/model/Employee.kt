@@ -1,14 +1,12 @@
 package com.kennycason.ml.model
 
 import com.kennycason.ml.model.time.Shift
-import com.sun.jdi.connect.spi.TransportService
 import org.eclipse.collections.api.list.ListIterable
 
 /**
  * Created by kenny on 11/7/16.
  */
-data class Employee(val name: String,
-                    val gender: Gender,
+data class Employee(val person: Person,
                     val shifts: ListIterable<Shift>,
                     val capableServices: ListIterable<Service>,
                     val totalHoursAvailable: Double =
