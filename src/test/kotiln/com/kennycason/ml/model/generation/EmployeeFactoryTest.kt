@@ -12,10 +12,8 @@ class EmployeeFactoryTest {
     fun employeeGeneration() {
         val employeeFactory = EmployeeFactory()
 
-        (1..10).forEach {
-            for (employee in employeeFactory.build(5)) {
-                println(employee)
-            }
+        for (employee in employeeFactory.build(5)) {
+            println(employee)
         }
     }
 }
