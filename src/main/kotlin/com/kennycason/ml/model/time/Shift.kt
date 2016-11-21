@@ -1,6 +1,7 @@
 package com.kennycason.ml.model.time
 
 import com.kennycason.ml.algorithm.montecarlo.model.TimeRangeBitSet
+import com.kennycason.ml.model.AssignmentResult
 import org.eclipse.collections.api.map.MapIterable
 import org.eclipse.collections.impl.factory.Maps
 import org.omg.PortableServer.IdAssignmentPolicyValue
@@ -18,9 +19,13 @@ class Shift(val shift1: Range = Range(0.0, 0.0),
             val assigned: TimeRangeBitSet = TimeRangeBitSet()) {
 
     // assign duration, with no specific time a shift, find first available
-    fun assignIfPossible(duration: Double) = assignIfPossible(duration, shift1) || assignIfPossible(duration, shift2)
+    fun assignIfPossible(duration: Double): AssignmentResult {
+        val assignmentResult = assignIfPossible(duration, shift1)
+        if (assignmentResult.success) { return assignmentResult }
+        return assignIfPossible(duration, shift2)
+    }
 
-    private fun assignIfPossible(duration: Double, shift: Range): Boolean {
+    private fun assignIfPossible(duration: Double, shift: Range): AssignmentResult {
         // multiply by two so we can iterate over more cleanly
         val rangeUnits = (duration * 2).toInt() - 1
         val shiftStartTime = (shift.startHour * 2).toInt()
@@ -37,31 +42,36 @@ class Shift(val shift1: Range = Range(0.0, 0.0),
                 for (timeOffset in 0.. rangeUnits) {
                     assigned.set(possibleAssignmentStartTime + timeOffset)
                 }
-                return true
+                val rangeStart = possibleAssignmentStartTime.toDouble() / 2.0 // convert back to double
+                return AssignmentResult(true, Range(rangeStart, rangeStart + duration))
             }
         }
-        return false
+        return AssignmentResult(false)
     }
 
-    fun assignIfPossible(assignment: Range) = assignIfPossible(assignment, shift1) || assignIfPossible(assignment, shift2)
-
     // an exact time range to an exact shift
-    private fun assignIfPossible(assignment: Range, shift: Range): Boolean {
-        if (!shift.contains(assignment)) { return false }
+    fun assignIfPossible(assignment: Range): AssignmentResult {
+        val assignmentResult = assignIfPossible(assignment, shift1)
+        if (assignmentResult.success) { return assignmentResult }
+        return assignIfPossible(assignment, shift2)
+    }
+
+    private fun assignIfPossible(assignment: Range, shift: Range): AssignmentResult {
+        if (!shift.contains(assignment)) { return AssignmentResult(false) }
 
         // multiply by two so we can iterate over more cleanly
         val rangeUnits = (assignment.duration * 2).toInt() - 1
         val assignmentStartTime = (assignment.startHour * 2).toInt()
         for (timeOffset in assignmentStartTime.. assignmentStartTime + rangeUnits) {
             if (assigned.get(timeOffset)) {
-                return false
+                return AssignmentResult(false)
             }
         }
         // if we got here, we can assign the time
         for (timeOffset in assignmentStartTime.. assignmentStartTime + rangeUnits) {
             assigned.set(timeOffset)
         }
-        return true
+        return AssignmentResult(true, assignment)
     }
 
     fun unassign(assignment: Range) {

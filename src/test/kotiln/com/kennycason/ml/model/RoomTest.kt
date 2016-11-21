@@ -18,7 +18,7 @@ class RoomTest {
                 services = Lists.immutable.of(service))
 
         val assignment = Range(8.0, 10.0)
-        assertTrue(room.assignIfPossible(service, assignment))
-        assertFalse(room.assignIfPossible(service, assignment))
+        assertTrue(room.assignIfPossible(service, assignment).success)
+        assertFalse(room.assignIfPossible(service, assignment).success)
     }
 }

@@ -48,7 +48,6 @@ class TimeRangeBitSetTest {
         assertFalse(timeRangeBitSet.contains(TimeRangeBitSet.Builder.from(Range(11.0, 13.0))))
     }
 
-
     @Test
     fun overlaps() {
         val timeRangeBitSet = TimeRangeBitSet()
@@ -62,4 +61,30 @@ class TimeRangeBitSetTest {
         assertFalse(timeRangeBitSet.overlaps(TimeRangeBitSet.Builder.from(Range(6.0, 7.0))))
         assertFalse(timeRangeBitSet.overlaps(TimeRangeBitSet.Builder.from(Range(12.5, 13.0))))
     }
+
+    @Test
+    fun setUnset() {
+        val timeRangeBitSet = TimeRangeBitSet()
+        timeRangeBitSet.set(16) // 8.0
+        timeRangeBitSet.set(17)
+        timeRangeBitSet.set(18)
+        timeRangeBitSet.set(19) // 9.5
+
+        // single field
+        assertTrue(timeRangeBitSet.get(16))
+        assertTrue(timeRangeBitSet.get(17))
+        assertTrue(timeRangeBitSet.get(18))
+        assertTrue(timeRangeBitSet.get(19))
+        timeRangeBitSet.unset(19)
+        assertFalse(timeRangeBitSet.get(19))
+        timeRangeBitSet.set(19)
+
+        val range = Range(8.0, 10.0)
+        timeRangeBitSet.unset(TimeRangeBitSet.Builder.from(range))
+        assertFalse(timeRangeBitSet.get(16))
+        assertFalse(timeRangeBitSet.get(17))
+        assertFalse(timeRangeBitSet.get(18))
+        assertFalse(timeRangeBitSet.get(19))
+    }
+
 }

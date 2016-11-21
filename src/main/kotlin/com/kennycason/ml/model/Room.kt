@@ -13,16 +13,48 @@ import org.eclipse.collections.api.map.MapIterable
 class Room(val name: String,
            val services: ListIterable<Service>,
            private val serviceAssignments: MapIterable<String, TimeRangeBitSet> =
-           services.toMap(Service::name, { s -> TimeRangeBitSet() })) {
+                                    services.toMap(Service::name, { s -> TimeRangeBitSet() })) {
 
     // assign time range
-    fun assignIfPossible(service: Service, assignment: Range): Boolean {
+    fun assignIfPossible(service: Service, assignment: Range): AssignmentResult {
         val serviceTimes = serviceAssignments.get(service.name)!!
         val assignmentTime = TimeRangeBitSet.Builder.from(assignment)
 
-        if (serviceTimes.contains(assignmentTime)) {
+        if (!serviceTimes.overlaps(assignmentTime)) {
             serviceTimes.orInPlace(assignmentTime)
+            return AssignmentResult(true, assignment)
         }
-        return false
+        return AssignmentResult(false)
     }
+
+    fun totalAssignedTime(): Double {
+        var total = 0.0
+        serviceAssignments.forEachKey { serviceName ->
+            total += totalAssignedTime(serviceName = serviceName)
+        }
+
+        return total
+    }
+
+    fun totalAssignedTime(serviceName: String): Double {
+        var total = 0.0
+        val timeRangeBitSit = serviceAssignments.get(serviceName)
+        (0.. timeRangeBitSit.length()).forEach { i ->
+            if (timeRangeBitSit.get(i)) {
+                total += 0.5
+            }
+        }
+
+        return total
+    }
+
+    fun unassign(service: Service, time: Range) {
+        serviceAssignments.get(service.name)!!.unset(TimeRangeBitSet.Builder.from(time))
+    }
+
+    override fun toString(): String {
+        return "Room(name='$name', services=$services, serviceAssignments=$serviceAssignments)"
+    }
+
+
 }

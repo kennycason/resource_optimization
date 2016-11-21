@@ -31,6 +31,6 @@ class ArrangementUtilizationFunction(office: Office,
 
     fun evaluate(arrangement: Arrangement): Double =
             employeeUtilizationFunction.evaluate(arrangement) * employeeWeight +
-            roomUtilizationFunction.evaluate(arrangement) * roomBalanceWeight
+            roomUtilizationFunction.evaluate() * roomBalanceWeight
 
 }

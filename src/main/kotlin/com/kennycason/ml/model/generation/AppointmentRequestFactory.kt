@@ -18,22 +18,23 @@ class AppointmentRequestFactory(private val availableServices: ListIterable<Serv
     private val random = Random()
     private val peopleFactory = PeopleFactory()
     private val shiftFactory = ShiftFactory()
-    private val serviceFactory = ServiceFactory()
     private val weekdayFactory = WeekdayFactory()
 
     fun build(n: Int): ListIterable<AppointmentRequest> {
         val appointmentRequests: MutableList<AppointmentRequest> = Lists.mutable.empty()
 
         (1.. n).forEach {
-            val service = serviceFactory.build(1).first
+            val service = availableServices[random.nextInt(availableServices.size())]
+            val duration = service.possibleDurations[random.nextInt(service.possibleDurations.size())]
+            val time = buildTime(service)
 
             appointmentRequests.add(
                     AppointmentRequest(customer = peopleFactory.build(1).first,
                             service = service,
                             employee = buildEmployee(),
                             weekday = weekdayFactory.build(),
-                            time = buildTime(service),
-                            duration = null))
+                            time = time,
+                            duration = if (time == null) { duration } else { null }))
         }
 
         return appointmentRequests

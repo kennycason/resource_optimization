@@ -12,7 +12,7 @@ data class AppointmentRequest(val customer: Person,
                               val service: Service,
                               val weekday: Weekday,
                               // time contains both an exact time and duration
-                              val time: Range?,
+                              val time: Range? = null,
                               // duration is for when a time is not specified, only a duration,
                               // time & duration can not both be set
-                              val duration: Double?)
+                              val duration: Double? = null)

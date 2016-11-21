@@ -14,23 +14,29 @@ import org.eclipse.collections.impl.factory.Maps
  */
 class Office(val employees: ListIterable<Employee>,
              val rooms: ListIterable<Room>,
-             val businessHours: Range = Range(8.0, 5.0),
+             val businessHours: Range = Range(8.0, 17.0),
              // convenience data structures for quick lookup during cost function evaluation
              val employeeNameLookup: MutableMap<String, Employee> = employees.toMap({e -> e.person.name}, {e -> e}),
              val roomNameLookup: MutableMap<String, Room> = rooms.toMap(Room::name, {r -> r}),
-             val employeeByServiceLookup: MapIterable<Service, MutableList<Employee>> = Maps.mutable.empty(),
-             val roomByServiceLookup: MapIterable<Service, MutableList<Room>> = Maps.mutable.empty()) {
+             val employeeByServiceLookup: MutableMap<String, MutableList<Employee>> = Maps.mutable.empty(),
+             val roomByServiceLookup: MutableMap<String, MutableList<Room>> = Maps.mutable.empty()) {
 
     init  {
         employees.forEach { employee ->
             employee.capableServices.forEach { capability ->
-                employeeByServiceLookup.getIfAbsent(capability, { Lists.mutable.empty()} ).add(employee)
+                if (!employeeByServiceLookup.containsKey(capability.name)) {
+                    employeeByServiceLookup.put(capability.name, Lists.mutable.empty())
+                }
+                employeeByServiceLookup.get(capability.name)!!.add(employee)
             }
         }
 
         rooms.forEach { room ->
             room.services.forEach { service ->
-                roomByServiceLookup.getIfAbsent(service, { Lists.mutable.empty()} ).add(room)
+                if (!roomByServiceLookup.containsKey(service.name)) {
+                    roomByServiceLookup.put(service.name, Lists.mutable.empty())
+                }
+                roomByServiceLookup.get(service.name)!!.add(room)
             }
         }
     }

@@ -15,23 +15,16 @@ import org.eclipse.collections.impl.factory.Maps
  */
 class RoomUtilizationFunction(val office: Office) {
 
-    fun evaluate(arrangement: Arrangement): Double {
-        val roomHours: MutableMap<String, Double> = Maps.mutable.empty()
+    fun evaluate(): Double {
         // create a zeroed entry for each room
-        office.rooms.forEach { room -> roomHours.put(room.name, 0.0) }
-
-        // tally up hours worked for each employee
-        arrangement.appointments.forEach { appointment ->
-            roomHours.put(appointment.room.name,
-                    roomHours.get(appointment.room.name)!! + appointment.time.duration)
-        }
-
-        // calculate balance
+        var total = 0.0
         var balance = 0.0
-        for ((name, room) in office.roomNameLookup) {
-            balance += roomHours.get(name)!! / office.businessHours.duration
+        office.rooms.forEach { room ->
+            balance += room.totalAssignedTime()
+            total += office.businessHours.duration * room.services.size()
+            //println("${room.totalAssignedTime()} / ${office.businessHours.duration * room.services.size()}")
         }
 
-        return balance / roomHours.size
+        return balance / total
     }
 }

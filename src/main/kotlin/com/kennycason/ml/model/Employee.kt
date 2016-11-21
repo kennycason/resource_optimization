@@ -18,8 +18,8 @@ class Employee(val person: Person,
             shifts.map { shift -> shift.shift1.duration + shift.shift2.duration }
                   .fold(0.0) { l, r -> l + r }
 
-    fun assignIfPossible(appointmentRequest: AppointmentRequest): Boolean {
-        if (!canWorkDay(appointmentRequest.weekday)) { return false }
+    fun assignIfPossible(appointmentRequest: AppointmentRequest): AssignmentResult {
+        if (!canWorkDay(appointmentRequest.weekday)) { return AssignmentResult(false) }
         if (appointmentRequest.time != null && appointmentRequest.duration != null) {
             throw IllegalStateException("Time and Duration can not both be set")
         }
@@ -34,13 +34,15 @@ class Employee(val person: Person,
     }
 
     // step through in 30 min chunks
-    private fun assignToFirstEmptySlotIfPossible(appointmentRequest: AppointmentRequest): Boolean {
+    private fun assignToFirstEmptySlotIfPossible(appointmentRequest: AppointmentRequest): AssignmentResult {
         for (shift in shifts) {
-            if (shift.assignIfPossible(appointmentRequest.duration!!)) {
-                return true
+            val assignmentResult = shift.assignIfPossible(appointmentRequest.duration!!)
+            if (assignmentResult.success) {
+                return assignmentResult
             }
+
         }
-        return false
+        return AssignmentResult(false)
     }
 
     private fun canWorkDay(weekday: Weekday) = shifts.containsKey(weekday)
