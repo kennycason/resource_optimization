@@ -6,6 +6,7 @@ import com.kennycason.ml.model.time.Range
 import com.kennycason.ml.model.time.Shift
 import com.kennycason.ml.model.time.Weekday
 import org.eclipse.collections.impl.factory.Lists
+import org.eclipse.collections.impl.factory.Maps
 import org.junit.Test
 import org.mockito.Mockito
 import kotlin.test.assertEquals
@@ -25,15 +26,15 @@ class EmployeeUtilizationFunctionTest {
         // three 8 hour employees
         val employee1 = Employee(
                 person = Person(name = "kenny", gender = Gender.MALE),
-                shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee2 = Employee(
                 person = Person(name = "addam", gender = Gender.MALE),
-                shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee3 = Employee(
                 person = Person(name = "andrew", gender = Gender.MALE),
-                shifts = Lists.immutable.of(Shift(Weekday.MONDAY, shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
 
         // build arrangements (i.e. sample appointments)

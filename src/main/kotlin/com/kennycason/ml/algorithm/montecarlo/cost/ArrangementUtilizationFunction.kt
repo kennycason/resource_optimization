@@ -17,11 +17,17 @@ import com.kennycason.ml.model.Office
  * Note: Assumes all arrangements are valid
  */
 class ArrangementUtilizationFunction(office: Office,
-                                     val employeeWeight: Double = 0.5,
-                                     val roomBalanceWeight: Double = 0.5) {
+                                     private val employeeWeight: Double = 0.5,
+                                     private val roomBalanceWeight: Double = 0.5) {
 
     private val employeeUtilizationFunction = EmployeeUtilizationFunction(office)
     private val roomUtilizationFunction = RoomUtilizationFunction(office)
+
+    init {
+        if (employeeWeight + roomBalanceWeight != 1.0) {
+            throw RuntimeException("employee weight [$employeeWeight] and room balance weight [$roomBalanceWeight] should sum to 1.0")
+        }
+    }
 
     fun evaluate(arrangement: Arrangement): Double =
             employeeUtilizationFunction.evaluate(arrangement) * employeeWeight +

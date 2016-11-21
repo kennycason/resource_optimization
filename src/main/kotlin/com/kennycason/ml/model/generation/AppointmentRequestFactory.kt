@@ -19,17 +19,21 @@ class AppointmentRequestFactory(private val availableServices: ListIterable<Serv
     private val peopleFactory = PeopleFactory()
     private val shiftFactory = ShiftFactory()
     private val serviceFactory = ServiceFactory()
+    private val weekdayFactory = WeekdayFactory()
 
     fun build(n: Int): ListIterable<AppointmentRequest> {
         val appointmentRequests: MutableList<AppointmentRequest> = Lists.mutable.empty()
 
         (1.. n).forEach {
             val service = serviceFactory.build(1).first
+
             appointmentRequests.add(
                     AppointmentRequest(customer = peopleFactory.build(1).first,
                             service = service,
+                            employee = buildEmployee(),
+                            weekday = weekdayFactory.build(),
                             time = buildTime(service),
-                            employee = buildEmployee()))
+                            duration = null))
         }
 
         return appointmentRequests
@@ -49,7 +53,6 @@ class AppointmentRequestFactory(private val availableServices: ListIterable<Serv
             val halfHours = random.nextInt(18) // 30 min intervals, exclude times that overlap with lunch
             val startHour = 8.0 + halfHours * 0.5 // 8 is the start time, 8am.
             val endHour = startHour + duration
-            println("$startHour + $endHour")
             if ((startHour < 12.0 && endHour <= 12.0)
                     || (startHour >= 13.0 && endHour <= 17.0)) {
                 return Range(startHour = startHour, endHour = endHour)

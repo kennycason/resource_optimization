@@ -6,4 +6,4 @@ import org.eclipse.collections.api.list.ListIterable
 /**
  * Created by kenny on 11/7/16.
  */
-data class Arrangement(var appointments: ListIterable<Appointment>)
+class Arrangement(var appointments: ListIterable<Appointment>) {}

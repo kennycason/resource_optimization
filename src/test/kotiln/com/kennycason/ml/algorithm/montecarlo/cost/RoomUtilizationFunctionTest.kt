@@ -6,6 +6,7 @@ import com.kennycason.ml.model.time.Range
 import com.kennycason.ml.model.time.Shift
 import com.kennycason.ml.model.time.Weekday
 import org.eclipse.collections.impl.factory.Lists
+import org.eclipse.collections.impl.factory.Maps
 import org.junit.Test
 import org.mockito.Mockito
 import kotlin.test.assertEquals
@@ -18,7 +19,7 @@ class RoomUtilizationFunctionTest {
     @Test
     fun basic() {
         // test data
-        val employee = Employee(person = Person(name = "mock employee", gender = Gender.MALE), shifts = Lists.immutable.empty(), capableServices = Lists.immutable.empty())
+        val employee = Employee(person = Person(name = "mock employee", gender = Gender.MALE), shifts = Maps.immutable.empty(), capableServices = Lists.immutable.empty())
         val person = Person(name = "mock customer", gender = Gender.MALE)
         val service = Service(name = "mock service", possibleDurations = Lists.immutable.empty())
 
