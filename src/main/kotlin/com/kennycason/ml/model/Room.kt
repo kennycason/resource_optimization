@@ -2,6 +2,8 @@ package com.kennycason.ml.model
 
 import com.kennycason.ml.algorithm.montecarlo.model.TimeRangeBitSet
 import com.kennycason.ml.model.time.Range
+import com.kennycason.ml.model.time.RoomAssignmentResult
+import com.kennycason.ml.model.time.ShiftAssignmentResult
 import org.eclipse.collections.api.list.ListIterable
 import org.eclipse.collections.api.map.MapIterable
 
@@ -16,15 +18,26 @@ class Room(val name: String,
                                     services.toMap(Service::name, { s -> TimeRangeBitSet() })) {
 
     // assign time range
-    fun assignIfPossible(service: Service, assignment: Range): AssignmentResult {
+    fun canAssign(service: Service, assignment: Range): RoomAssignmentResult {
         val serviceTimes = serviceAssignments.get(service.name)!!
         val assignmentTime = TimeRangeBitSet.Builder.from(assignment)
 
         if (!serviceTimes.overlaps(assignmentTime)) {
-            serviceTimes.orInPlace(assignmentTime)
-            return AssignmentResult(true, assignment)
+            return RoomAssignmentResult(true, assignment)
         }
-        return AssignmentResult(false)
+        return RoomAssignmentResult(false)
+    }
+
+    fun assign(service: Service, assignment: Range): RoomAssignmentResult {
+        val assignmentResult = canAssign(service, assignment)
+        if (!assignmentResult.success) {
+            throw IllegalStateException("This appointment is not assignable!")
+        }
+        val serviceTimes = serviceAssignments[service.name]!!
+        val assignmentTime = TimeRangeBitSet.Builder.from(assignment)
+
+        serviceTimes.orInPlace(assignmentTime)
+        return assignmentResult
     }
 
     fun totalAssignedTime(): Double {

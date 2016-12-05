@@ -26,15 +26,15 @@ class EmployeeUtilizationFunctionTest {
         // three 8 hour employees
         val employee1 = Employee(
                 person = Person(name = "kenny", gender = Gender.MALE),
-                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.mutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee2 = Employee(
                 person = Person(name = "addam", gender = Gender.MALE),
-                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.mutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
         val employee3 = Employee(
                 person = Person(name = "andrew", gender = Gender.MALE),
-                shifts = Maps.immutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
+                shifts = Maps.mutable.of(Weekday.MONDAY, Shift(shift1 = Range(8.0, 12.0), shift2 = Range(13.0, 17.0))),
                 capableServices = Lists.immutable.empty())
 
         // build arrangements (i.e. sample appointments)
@@ -67,12 +67,12 @@ class EmployeeUtilizationFunctionTest {
         val employeeUtilizationFunction = EmployeeUtilizationFunction(office = office)
 
         // should be 0.5 as each employee is providing one service that takes half of their time
-        val arrangement = Arrangement(appointments = Lists.immutable.of(appointment1, appointment2, appointment3))
-        assertEquals(0.5, employeeUtilizationFunction.evaluate(arrangement))
+        assertEquals(0.5, employeeUtilizationFunction.evaluate(
+                Lists.immutable.of(appointment1, appointment2, appointment3)))
 
         // should be 2/6 (0.33) as only two employees are providing service, spending half of their time,
         // and one employee is being lazy and not doing anything
-        val arrangement2 = Arrangement(appointments = Lists.immutable.of(appointment1, appointment2))
-        assertEquals(0.3333333333333333, employeeUtilizationFunction.evaluate(arrangement2))
+        assertEquals(0.3333333333333333, employeeUtilizationFunction.evaluate(
+                Lists.immutable.of(appointment1, appointment2)))
     }
 }

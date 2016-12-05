@@ -17,7 +17,7 @@ import java.util.*
 class ShiftFactory {
     private val random = Random()
 
-    fun build(): MapIterable<Weekday, Shift> {
+    fun build(): MutableMap<Weekday, Shift> {
         val shifts: MutableMap<Weekday, Shift> = Maps.mutable.empty()
         for (weekday in Weekday.values()) {
             shifts.put(weekday, Shift(

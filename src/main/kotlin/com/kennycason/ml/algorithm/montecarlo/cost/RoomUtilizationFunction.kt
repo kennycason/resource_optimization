@@ -22,7 +22,7 @@ class RoomUtilizationFunction(val office: Office) {
         office.rooms.forEach { room ->
             balance += room.totalAssignedTime()
             total += office.businessHours.duration * room.services.size()
-            //println("${room.totalAssignedTime()} / ${office.businessHours.duration * room.services.size()}")
+            // println("${room.totalAssignedTime()} / ${office.businessHours.duration * room.services.size()}")
         }
 
         return balance / total

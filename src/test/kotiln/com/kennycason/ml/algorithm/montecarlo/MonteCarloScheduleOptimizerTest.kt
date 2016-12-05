@@ -29,7 +29,7 @@ class MonteCarloScheduleOptimizerTest {
         val monteCarloScheduleOptimizer = MonteCarloScheduleOptimizer(office)
         val appointmentRequests = appointmentRequestFactory.build(250)
 
-        println(monteCarloScheduleOptimizer.balance(appointmentRequests))
+        val appointments = monteCarloScheduleOptimizer.balance(appointmentRequests)
     }
 
 }

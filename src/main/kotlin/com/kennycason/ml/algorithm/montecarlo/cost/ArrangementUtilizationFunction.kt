@@ -1,7 +1,9 @@
 package com.kennycason.ml.algorithm.montecarlo.cost
 
 import com.kennycason.ml.algorithm.montecarlo.model.Arrangement
+import com.kennycason.ml.model.Appointment
 import com.kennycason.ml.model.Office
+import org.eclipse.collections.api.list.ListIterable
 
 /**
  * Created by kenny on 11/7/16.
@@ -29,8 +31,8 @@ class ArrangementUtilizationFunction(office: Office,
         }
     }
 
-    fun evaluate(arrangement: Arrangement): Double =
-            employeeUtilizationFunction.evaluate(arrangement) * employeeWeight +
+    fun evaluate(appointments: ListIterable<Appointment>): Double =
+            employeeUtilizationFunction.evaluate(appointments) * employeeWeight +
             roomUtilizationFunction.evaluate() * roomBalanceWeight
 
 }

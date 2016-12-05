@@ -1,7 +1,9 @@
 package com.kennycason.ml.algorithm.montecarlo.cost
 
 import com.kennycason.ml.algorithm.montecarlo.model.Arrangement
+import com.kennycason.ml.model.Appointment
 import com.kennycason.ml.model.Office
+import org.eclipse.collections.api.list.ListIterable
 import org.eclipse.collections.impl.factory.Maps
 
 /**
@@ -15,13 +17,13 @@ import org.eclipse.collections.impl.factory.Maps
  */
 class EmployeeUtilizationFunction(val office: Office) {
 
-    fun evaluate(arrangement: Arrangement): Double {
+    fun evaluate(appointments: ListIterable<Appointment>): Double {
         val employeeHours: MutableMap<String, Double> = Maps.mutable.empty()
         // create a zeroed entry for each employee
         office.employees.forEach { employee -> employeeHours.put(employee.person.name, 0.0) }
 
         // tally up hours worked for each employee
-        arrangement.appointments.forEach { appointment ->
+        appointments.forEach { appointment ->
             employeeHours.put(appointment.employee.person.name,
                     employeeHours.get(appointment.employee.person.name)!! + appointment.time.duration)
         }

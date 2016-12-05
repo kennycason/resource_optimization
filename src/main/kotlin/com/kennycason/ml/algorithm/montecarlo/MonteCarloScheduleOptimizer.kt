@@ -1,12 +1,12 @@
 package com.kennycason.ml.algorithm.montecarlo
 
 import com.kennycason.ml.algorithm.montecarlo.cost.ArrangementUtilizationFunction
-import com.kennycason.ml.algorithm.montecarlo.cost.ArrangementsUtilizationFunction
 import com.kennycason.ml.algorithm.montecarlo.cost.EmployeeUtilizationFunction
 import com.kennycason.ml.algorithm.montecarlo.cost.RoomUtilizationFunction
 import com.kennycason.ml.algorithm.montecarlo.model.Arrangement
 import com.kennycason.ml.model.*
 import com.kennycason.ml.model.time.Range
+import com.kennycason.ml.model.time.RoomAssignmentResult
 import org.eclipse.collections.api.RichIterable
 import org.eclipse.collections.api.list.ListIterable
 import org.eclipse.collections.api.list.MutableList
@@ -21,15 +21,15 @@ import java.util.*
  * 3. repeat until all requests are went through
  * 4. begin running simulations of various appointment swaps in an attempt to find max balanced schedule
  */
-class MonteCarloScheduleOptimizer(private val office: Office) {
+class MonteCarloScheduleOptimizer(private val office: Office,
+                                  private val maxEmployeeAssignmentTries: Int = 1000,
+                                  private val maxSwaps: Int = 10) {
     private val random = Random()
-    private val maxEmployeeAssignmentTries = 10
-    private val maxRoomAssignmentTries = 10
     private val arrangementUtilizationFunction = ArrangementUtilizationFunction(office)
     private val employeeUtilizationFunction = EmployeeUtilizationFunction(office)
     private val roomUtilizationFunction = RoomUtilizationFunction(office)
 
-    fun balance(appointmentRequests: ListIterable<AppointmentRequest>) : Arrangement {
+    fun balance(appointmentRequests: ListIterable<AppointmentRequest>) : ListIterable<Appointment> {
         println("Running simulation...")
         val appointments: MutableList<Appointment> = Lists.mutable.empty()
         val unassignedRequests: MutableList<AppointmentRequest> = Lists.mutable.empty()
@@ -40,10 +40,16 @@ class MonteCarloScheduleOptimizer(private val office: Office) {
             for (i in 0.. maxEmployeeAssignmentTries) {
                 // assign employee
                 val employee = fetchRandomPersonByService(request.service)
-                val employeeAssignmentResult = employee.assignIfPossible(request)
+
+                // no employee can perform service
+                if (employee == null) { break }
+
+                val employeeAssignmentResult = employee.canAssign(request)
                 if (employeeAssignmentResult.success) {
-                    val roomAssignmentSuccess = assignRoom(request.service, employeeAssignmentResult.time!!)
-                    if (roomAssignmentSuccess) {
+                    employee.assign(request)
+
+                    val roomAssignmentResult = assignRoomIfPossible(request.service, employeeAssignmentResult.time!!)
+                    if (roomAssignmentResult.success) {
                         assigned = true
                         appointments.add(Appointment(
                                 customer = request.customer,
@@ -51,11 +57,10 @@ class MonteCarloScheduleOptimizer(private val office: Office) {
                                 room = office.rooms.get(0)!!,
                                 service = request.service,
                                 weekday = request.weekday,
-                                time = employeeAssignmentResult.time!!))
+                                time = employeeAssignmentResult.time))
                         break
 
-                    } else { // undo employee assignment
-                        employee.shifts[request.weekday].unassign(employeeAssignmentResult.time)
+                    } else {
                         assigned = false
                     }
                 }
@@ -64,36 +69,53 @@ class MonteCarloScheduleOptimizer(private val office: Office) {
                 unassignedRequests.add(request)
             }
         }
-        // swap and add
-        // TODO
 
-        val arrangement = Arrangement(appointments)
+        swapAndAssign(appointments, appointmentRequests, unassignedRequests);
 
-        println("total balance: ${arrangementUtilizationFunction.evaluate(arrangement)}")
-        println("employee balance: ${employeeUtilizationFunction.evaluate(arrangement)}")
+        println("total balance: ${arrangementUtilizationFunction.evaluate(appointments)}")
+        println("employee balance: ${employeeUtilizationFunction.evaluate(appointments)}")
         println("room balance: ${roomUtilizationFunction.evaluate()}")
         println("[${appointments.size}] appoints assigned")
         println("[${unassignedRequests.size}] unassigned appoint requests")
 
        // println(office)
-        return arrangement
+        return appointments
     }
 
-    private fun assignRoom(service: Service, time: Range): Boolean {
+    private fun swapAndAssign(appointments: MutableList<Appointment>,
+                              appointmentRequests: ListIterable<AppointmentRequest>,
+                              unassignedRequests: ListIterable<AppointmentRequest>) {
+
+        (0.. maxSwaps).forEach { step ->
+//            println("\nstep $step")
+//            println("total balance: ${arrangementUtilizationFunction.evaluate(appointments)}")
+//            println("employee balance: ${employeeUtilizationFunction.evaluate(appointments)}")
+//            println("room balance: ${roomUtilizationFunction.evaluate()}")
+
+
+        }
+
+    }
+
+    private fun assignRoomIfPossible(service: Service, time: Range): RoomAssignmentResult {
         // now assign room
         val possibleRooms = office.roomByServiceLookup[service.name]!!
         for (i in 0.. maxEmployeeAssignmentTries) {
             val randomRoom = possibleRooms[random.nextInt(possibleRooms.size)]
-            val assignmentResult = randomRoom.assignIfPossible(service, time)
+            val assignmentResult = randomRoom.canAssign(service, time)
             if (assignmentResult.success) {
-                return true
+                randomRoom.assign(service, time)
+                return assignmentResult
             }
         }
-        return false
+        return RoomAssignmentResult(false)
     }
 
-    private fun fetchRandomPersonByService(service: Service): Employee {
-        val employees = office.employeeByServiceLookup.get(service.name)!!
+    private fun fetchRandomPersonByService(service: Service): Employee? {
+        if (!office.employeeByServiceLookup.containsKey(service.name)) {
+            return null
+        }
+        val employees = office.employeeByServiceLookup[service.name]!!
         return employees[random.nextInt(employees.size)]!!
     }
 
